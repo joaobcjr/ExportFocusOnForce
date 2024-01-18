@@ -33,12 +33,12 @@ def exportarPaginas(folder,subfolder):
     if not os.path.exists(courseFolderName + '/' + folder): 
         os.mkdir(courseFolderName + '/' + folder);
     
-    if not os.path.exists(courseFolderName + '/' + folder + '/images'): 
-        os.mkdir(courseFolderName + '/' + folder + '/images');
-    
     if not os.path.exists(courseFolderName + '/' + folder + '/' + subfolder): 
         os.mkdir(courseFolderName + '/' + folder + '/' + subfolder);
     
+    if not os.path.exists(courseFolderName + '/' + folder + '/' + subfolder + '/images'): 
+        os.mkdir(courseFolderName + '/' + folder + '/' + subfolder + '/images');
+
     doc = SimpleDocTemplate(courseFolderName + '/' + folder + '/' + subfolder + '/AllPages.pdf', pagesize = A1)
     parts = [];
 
@@ -50,12 +50,11 @@ def exportarPaginas(folder,subfolder):
         # if index > 0:
         #     parts.append(PageBreak());
 
-        imagePath = courseFolderName + '/' + folder + '/images/page '+str(index+1)+'.png';
+        imagePath = courseFolderName + '/' + folder + '/' + subfolder + '/images/page '+str(index+1)+'.png';
         slide.screenshot(imagePath);
         parts.append(Image(imagePath));
-        time.sleep(1)
     
-    doc.build(parts)
+    doc.build(parts);
     shutil.rmtree(courseFolderName + '/' + folder + '/images');
 
 def getAllStepsFromCourse():
@@ -71,12 +70,12 @@ def getAllStepsFromCourse():
 
     for titleOrTopic in allTitlesAndTopics:
         elTitle = titleOrTopic.find_element(By.CSS_SELECTOR,'h4>a');
-        title = elTitle.get_attribute("text").replace(".", "").replace("/", "");
+        title = elTitle.get_attribute("text").replace(".", "").replace("/", " ").replace(":", "");
         # Ignora o title se estiver na lista
         if title not in titlesToIgnore:
             allTopicsByTitle = titleOrTopic.find_elements(By.CSS_SELECTOR,'li>span>a');
             for el in allTopicsByTitle:
-                topic = el.get_attribute("title").replace(".", "").replace("/", "");
+                topic = el.get_attribute("title").replace(".", "").replace("/", " ").replace(":", "");
                 if topic not in topicsToIgnore:
                     lesson = Lesson(title,
                                     topic,
@@ -91,7 +90,7 @@ def getAllStepsFromCourse():
         except NoSuchElementException:
             continue
         driver.get(fullScreenHref);
-        time.sleep(2)
+        time.sleep(7)
         exportarPaginas(el.title, el.topic);
 
 
