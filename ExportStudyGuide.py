@@ -55,7 +55,7 @@ def exportarPaginas(folder,subfolder):
         parts.append(Image(imagePath));
     
     doc.build(parts);
-    shutil.rmtree(courseFolderName + '/' + folder + '/images');
+    shutil.rmtree(courseFolderName + '/' + folder + '/' + subfolder + '/images');
 
 def getAllStepsFromCourse():
     listSlideLinks = [];
