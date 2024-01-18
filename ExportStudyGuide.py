@@ -73,7 +73,7 @@ def getAllStepsFromCourse():
         allTopicsByTitle = titleOrTopic.find_elements(By.CSS_SELECTOR,'li>span>a');
         for el in allTopicsByTitle:
             topic = el.get_attribute("title").replace(".", "").replace("/", "");
-            if title != 'Knowledge Check':
+            if topic != 'Knowledge Check':
                 lesson = Lesson(title,
                                 topic,
                                 el.get_attribute("href")
