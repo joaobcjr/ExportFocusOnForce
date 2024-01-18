@@ -9,6 +9,7 @@ from reportlab.platypus import SimpleDocTemplate, Image, PageBreak
 from reportlab.lib.units import cm
 from reportlab.lib.pagesizes import A1
 from Variables import *
+from selenium.common.exceptions import NoSuchElementException
 
 class Lesson:
     def __init__(self, title,topic,link):
@@ -18,7 +19,8 @@ class Lesson:
 
 options = webdriver.ChromeOptions();
 options.add_experimental_option("detach", True);
-options.add_argument("--start-maximized");
+# options.add_argument("--start-maximized");
+# options.add_argument("--window-size=1612,882")
 driver = webdriver.Chrome(options=options);
 
 def exportarPaginas(folder,subfolder):
@@ -70,19 +72,24 @@ def getAllStepsFromCourse():
     for titleOrTopic in allTitlesAndTopics:
         elTitle = titleOrTopic.find_element(By.CSS_SELECTOR,'h4>a');
         title = elTitle.get_attribute("text").replace(".", "").replace("/", "");
-        allTopicsByTitle = titleOrTopic.find_elements(By.CSS_SELECTOR,'li>span>a');
-        for el in allTopicsByTitle:
-            topic = el.get_attribute("title").replace(".", "").replace("/", "");
-            if topic != 'Knowledge Check':
-                lesson = Lesson(title,
-                                topic,
-                                el.get_attribute("href")
-                                )
-                listSlideLinks.append(lesson);
+        # Ignora o title se estiver na lista
+        if title not in titlesToIgnore:
+            allTopicsByTitle = titleOrTopic.find_elements(By.CSS_SELECTOR,'li>span>a');
+            for el in allTopicsByTitle:
+                topic = el.get_attribute("title").replace(".", "").replace("/", "");
+                if topic not in topicsToIgnore:
+                    lesson = Lesson(title,
+                                    topic,
+                                    el.get_attribute("href")
+                                    )
+                    listSlideLinks.append(lesson);
 
     for el in listSlideLinks:
         driver.get(el.link);
-        fullScreenHref = driver.find_element(By.XPATH, '//a[contains(@class, "fullscreen-mode")]').get_attribute("href");
+        try:
+            fullScreenHref = driver.find_element(By.XPATH, '//a[contains(@class, "fullscreen-mode")]').get_attribute("href");
+        except NoSuchElementException:
+            continue
         driver.get(fullScreenHref);
         time.sleep(2)
         exportarPaginas(el.title, el.topic);
