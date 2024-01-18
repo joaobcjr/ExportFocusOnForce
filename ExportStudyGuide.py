@@ -18,7 +18,7 @@ class Lesson:
 
 options = webdriver.ChromeOptions();
 options.add_experimental_option("detach", True);
-options.add_argument("--window-size=595,842")
+options.add_argument("--start-maximized");
 driver = webdriver.Chrome(options=options);
 
 def exportarPaginas(folder,subfolder):

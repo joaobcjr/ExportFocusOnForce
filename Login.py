@@ -6,10 +6,12 @@ from Variables import *
 
 options = webdriver.ChromeOptions();
 options.add_experimental_option("detach", True);
+options.add_argument("--start-maximized");
 driver = webdriver.Chrome(options=options);
 
 # Login Process
 driver.get('https://focusonforce.com/login/');
+driver.maximize_window();
 driver.find_element(By.NAME, "fofusername").send_keys(email);
 driver.find_element(By.NAME, "fofpassword").send_keys(senha);
 driver.find_element(By.NAME, "fofloginsubmit").click();
